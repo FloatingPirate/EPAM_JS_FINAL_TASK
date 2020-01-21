@@ -1,3 +1,10 @@
-div {
-  color: blue;
+.epam-js-to-do-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.epam-js-clean-link:hover {
+  color: blueviolet;
 }

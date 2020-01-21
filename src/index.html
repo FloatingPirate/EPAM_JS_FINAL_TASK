@@ -1,10 +1,41 @@
 <!DOCTYPE html>
   <head>
-    <title>HTML + JS boilerplate project</title>
+    <title>Epam JS Courser Final Task Pisarev F.D.</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   </head>
   <body>
-    <div>Hello, world</div>
+    <div id="toDoList" class="epam-js-to-do-list">
+
+      <input id="searchBox" class="epam-js-searchbox" type="search" placeholder="Search..."></input>
+
+      <input id="newTaskInput" class="epam-js-new-task-input" type="text" placeholder="New task..."></input>
+      <button id="addNewTaskBtn" class="epam-js-add-new-task-btn">ADD</button>
+
+      <!-- Open taks list -->
+      <select id="openListSortElement" class="epam-js-sort-element">
+        <option>Text(ASC)</option>
+        <option>Text(DESC)</option>
+        <option>Creation date(ASC)</option>
+        <option>Creation date(DESC)</option>
+      </select>
+      <div class="epam-js-list-name">Open</div>
+      <ul id="openTasksList" class="epam-js-open-list">
+      </ul>
+      <a id="clearOpenListLink" class="epam-js-clean-link"> Clear "Open" list</a>
+      
+      <!-- Done tasks list -->
+      <select id="doneListSortElement" class="epam-js-sort-element">
+        <option>Text(ASC)</option>
+        <option>Text(DESC)</option>
+        <option>Due date(ASC)</option> 
+        <option>Due date(DESC)</option>
+      </select>
+      <div class="epam-js-list-name">Done</div>
+      <ul id="doneTasksList" class="epam-js-done-list">
+      </ul>
+      <a id="clearDoneListLink" class="epam-js-clean-link">Clear "Done" list</a>
+
+    </div>
   </body>
 </html>
