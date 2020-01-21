@@ -30,14 +30,28 @@ const createTask = taskText => {
     id: Math.random(),
     text: taskText,
     status: 'Open',
-    creationDate: new Date(),
-    dueDate: new Date(),
+    creationDate: new Date().toLocaleString('en-US', {
+      hour: 'numeric',
+      hour12: true,
+    }),
+    dueDate: new Date().toLocaleString('en-US', {
+      hour: 'numeric',
+      hour12: true,
+    }),
   };
 };
 
 // LOCAL STORAGE OPERATIONS
 const getListFormLocalStorage = listName => {
   return JSON.parse(localStorage.getItem(listName));
+};
+
+const removeTaskFromLocalStorage = (listName, taskId) => {
+  const modifiedTaskList = getListFormLocalStorage(listName).filter(
+    task => task.id !== taskId,
+  );
+
+  localStorage.setItem(listName, JSON.stringify(modifiedTaskList));
 };
 
 const saveListElementToLocalStorage = (listName, listValue) => {
@@ -88,9 +102,52 @@ const addNewTaskToDomList = (listName, task) => {
     newListElement.appendChild(userTextInput);
   });
 
-  const newListElementText = document.createTextNode(task.text);
+  //Checkbox appearing logic
+  const checkBoxToADoneList = document.createElement('input');
+  checkBoxToADoneList.setAttribute('type', 'checkbox');
+  newListElement.appendChild(checkBoxToADoneList);
 
-  newListElement.appendChild(newListElementText);
+  checkBoxToADoneList.addEventListener('click', event => {
+    removeTaskFromLocalStorage(listName, task.id);
+    reinitializeDomListWihValues(listName, getListFormLocalStorage(listName));
+
+    if (listName === OPEN_TASKS_LIST_ID) {
+      saveListElementToLocalStorage(DONE_TASKS_LIST_ID, task);
+      addNewTaskToDomList(DONE_TASKS_LIST_ID, task);
+    } else {
+      saveListElementToLocalStorage(OPEN_TASKS_LIST_ID, task);
+      addNewTaskToDomList(OPEN_TASKS_LIST_ID, task);
+    }
+  });
+
+  const binIcon = document.createElement('img');
+  binIcon.setAttribute('src', '../resources/bin_icon.png');
+  binIcon.setAttribute('style', 'width: 20%');
+  binIcon.style.display = 'none';
+  newListElement.appendChild(binIcon);
+
+  binIcon.addEventListener('click', event => {
+    removeTaskFromLocalStorage(listName, task.id);
+    reinitializeDomListWihValues(listName, getListFormLocalStorage(listName));
+  });
+
+  newListElement.addEventListener('mouseover', event => {
+    binIcon.style.display = 'inline';
+  });
+
+  newListElement.addEventListener('mouseout', event => {
+    binIcon.style.display = 'none';
+  });
+
+  const taskText = document.createTextNode(task.text);
+  const taskCreationDate = document.createTextNode(task.creationDate);
+  const taskDueDate = document.createTextNode(task.dueDate);
+
+  newListElement.setAttribute('class', 'epam-js-task');
+  newListElement.appendChild(taskText);
+  newListElement.appendChild(taskCreationDate);
+  newListElement.appendChild(taskDueDate);
+
   tasksList.appendChild(newListElement);
 };
 
@@ -138,12 +195,51 @@ searchBox.addEventListener('input', event => {
 
 // LIST SORTING OPERATIONS
 openTasksListSorter.addEventListener('input', event => {
-  //TODO: implement the actual sorting logic
-  event.target.value;
+  let sortedTaskList;
+
+  if (event.target.value === 'Text(ASC)') {
+    sortedTaskList = getListFormLocalStorage(OPEN_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.text > t2.text,
+    );
+  } else if (event.target.value === 'Text(DESC)') {
+    sortedTaskList = getListFormLocalStorage(OPEN_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.text < t2.text,
+    );
+  } else if (event.target.value === 'Creation date(ASC)') {
+    sortedTaskList = getListFormLocalStorage(OPEN_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.creationDate < t2.creationDate,
+    );
+  } else if (event.target.value === 'Creation date(DESC)') {
+    sortedTaskList = getListFormLocalStorage(OPEN_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.creationDate > t2.creationDate,
+    );
+  }
+  localStorage.setItem(OPEN_TASKS_LIST_ID, JSON.stringify(sortedTaskList));
+  reinitializeDomListWihValues(OPEN_TASKS_LIST_ID, sortedTaskList);
 });
 
 doneTasksListSorter.addEventListener('input', event => {
-  //TODO: implement the actual sorting logic
+  let sortedTaskList;
+
+  if (event.target.value === 'Text(ASC)') {
+    sortedTaskList = getListFormLocalStorage(DONE_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.text > t2.text,
+    );
+  } else if (event.target.value === 'Text(DESC)') {
+    sortedTaskList = getListFormLocalStorage(DONE_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.text < t2.text,
+    );
+  } else if (event.target.value === 'Due date(ASC)') {
+    sortedTaskList = getListFormLocalStorage(DONE_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.dueDate < t2.dueDate,
+    );
+  } else if (event.target.value === 'Due date(DESC)') {
+    sortedTaskList = getListFormLocalStorage(DONE_TASKS_LIST_ID).sort(
+      (t1, t2) => t1.dueDate > t2.dueDate,
+    );
+  }
+  localStorage.setItem(DONE_TASKS_LIST_ID, JSON.stringify(sortedTaskList));
+  reinitializeDomListWihValues(DONE_TASKS_LIST_ID, sortedTaskList);
 });
 
 // CLEAR ALL ELEMENTS FROM LIST OPERATIONS
