@@ -13,6 +13,11 @@ const clearAllDoneTasksLink = document.getElementById('clearDoneListLink');
 const openTasksListSorter = document.getElementById('openListSortElement');
 const doneTasksListSorter = document.getElementById('doneListSortElement');
 
+// GENERAL FUNCTIONS
+const randomInteger = (min, max) => {
+  return min + Math.floor((max - min) * Math.random());
+};
+
 // GENERAL DOM FUNCTIONS
 const reinitializeDomListWihValues = (listName, tasksArray) => {
   const tasksList = document.getElementById(listName);
@@ -27,7 +32,7 @@ const reinitializeDomListWihValues = (listName, tasksArray) => {
 // TASK CREATION
 const createTask = taskText => {
   return {
-    id: Math.random(),
+    id: randomInteger(0, 5000),
     text: taskText,
     status: 'Open',
     creationDate: new Date().toLocaleString('en-US', {
@@ -54,13 +59,24 @@ const removeTaskFromLocalStorage = (listName, taskId) => {
   localStorage.setItem(listName, JSON.stringify(modifiedTaskList));
 };
 
-const saveListElementToLocalStorage = (listName, listValue) => {
+const addTaskToListToLocalStorageFromText = (listName, text) => {
   if (!getListFormLocalStorage(listName)) {
-    localStorage.setItem(listName, JSON.stringify([createTask(listValue)]));
+    localStorage.setItem(listName, JSON.stringify([createTask(text)]));
   } else {
     const listFromLocalStorage = getListFormLocalStorage(listName);
 
-    listFromLocalStorage.push(createTask(listValue));
+    listFromLocalStorage.push(createTask(text));
+    localStorage.setItem(listName, JSON.stringify(listFromLocalStorage));
+  }
+};
+
+const addTaskToListToLocalStorage = (listName, task) => {
+  if (!getListFormLocalStorage(listName)) {
+    localStorage.setItem(listName, JSON.stringify([task]));
+  } else {
+    const listFromLocalStorage = getListFormLocalStorage(listName);
+
+    listFromLocalStorage.push(task);
     localStorage.setItem(listName, JSON.stringify(listFromLocalStorage));
   }
 };
@@ -91,7 +107,7 @@ const addNewTaskToDomList = (listName, task) => {
     userTextInput.addEventListener('keyup', event => {
       event.preventDefault();
       if (event.keyCode === 13) {
-        newListElement.innerText = userTextInput.value;
+        newListElement.innerText = `${userTextInput.value} ${task.creationDate} ${task.dueDate}`;
         changeTaskTextInLocalStorage(listName, task.id, userTextInput.value);
         newListElement.removeChild(userTextInput);
       } else if (event.keyCode === 27) {
@@ -112,17 +128,17 @@ const addNewTaskToDomList = (listName, task) => {
     reinitializeDomListWihValues(listName, getListFormLocalStorage(listName));
 
     if (listName === OPEN_TASKS_LIST_ID) {
-      saveListElementToLocalStorage(DONE_TASKS_LIST_ID, task);
+      addTaskToListToLocalStorage(DONE_TASKS_LIST_ID, task);
       addNewTaskToDomList(DONE_TASKS_LIST_ID, task);
     } else {
-      saveListElementToLocalStorage(OPEN_TASKS_LIST_ID, task);
+      addTaskToListToLocalStorage(OPEN_TASKS_LIST_ID, task);
       addNewTaskToDomList(OPEN_TASKS_LIST_ID, task);
     }
   });
 
   const binIcon = document.createElement('img');
+  binIcon.setAttribute('class', 'epam-js-task bin-icon');
   binIcon.setAttribute('src', '../resources/bin_icon.png');
-  binIcon.setAttribute('style', 'width: 20%');
   binIcon.style.display = 'none';
   newListElement.appendChild(binIcon);
 
@@ -143,6 +159,8 @@ const addNewTaskToDomList = (listName, task) => {
   const taskCreationDate = document.createTextNode(task.creationDate);
   const taskDueDate = document.createTextNode(task.dueDate);
 
+  const dateDiv = document.createElement('div');
+  dateDiv.setAttribute('class', 'epam-js-task-date');
   newListElement.setAttribute('class', 'epam-js-task');
   newListElement.appendChild(taskText);
   newListElement.appendChild(taskCreationDate);
@@ -155,7 +173,7 @@ const addNewTaskToOpenListFromInputBox = () => {
   if (newTaskInput.value) {
     addNewTaskToDomList(OPEN_TASKS_LIST_ID, createTask(newTaskInput.value));
 
-    saveListElementToLocalStorage(OPEN_TASKS_LIST_ID, newTaskInput.value);
+    addTaskToListToLocalStorageFromText(OPEN_TASKS_LIST_ID, newTaskInput.value);
     newTaskInput.value = '';
   }
 };
@@ -260,6 +278,12 @@ const initializeListsFromLocalStorage = () => {
   if (getListFormLocalStorage(OPEN_TASKS_LIST_ID)) {
     getListFormLocalStorage(OPEN_TASKS_LIST_ID).forEach(listElement => {
       addNewTaskToDomList(OPEN_TASKS_LIST_ID, listElement);
+    });
+  }
+
+  if (getListFormLocalStorage(DONE_TASKS_LIST_ID)) {
+    getListFormLocalStorage(DONE_TASKS_LIST_ID).forEach(listElement => {
+      addNewTaskToDomList(DONE_TASKS_LIST_ID, listElement);
     });
   }
 };

@@ -10,18 +10,28 @@
 .epam-js-to-do-list {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+}
+
+.epam-js-clean-link {
+  color: red;
+
 }
 
 .epam-js-clean-link:hover {
   color: blueviolet;
+  float: right;
+  font-size: larger;
 }
 
 .epam-js-list-name {
   color: darkorange;
-  font-size: larger;
+  font-size: x-large;
   margin-top: 15px;
+}
+
+.epam-js-task {
+  font-size: x-large;
+  color: purple;
 }
 
 .epam-js-task:hover {
@@ -30,4 +40,42 @@
 
 .epam-js-task .creation-date {
   margin-left: 10px;
+}
+
+.epam-js-task .bin-icon {
+  width: 4%;
+  float: right;
+}
+
+.epam-js-searchbox {
+  align-self: right;
+  width: 20%;
+  background-color: orange ;
+  font-size: large;
+  border: none;
+  border-bottom: 4px solid black;
+}
+
+.epam-js-new-task-input {
+  background-color: greenyellow;
+  align-self: center;
+  font-size: large;
+  width: 25%;
+  border: none;
+  border-bottom: 4px solid black;
+  margin-top: 5px;
+}
+
+.epam-js-add-new-task-btn {
+  color: greenyellow;
+  font-size: large;
+  background-color: steelblue;
+  height: 100%;
+  width: 20%;
+  align-self: center;
+}
+
+.epam-js-sort-element {
+  background-color: khaki;
+  width: 20%;
 }
