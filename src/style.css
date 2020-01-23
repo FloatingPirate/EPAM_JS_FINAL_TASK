@@ -1,3 +1,22 @@
+body {
+  background-color: black;
+}
+
+.epam-js-eighty-four-style {
+  font-size: medium;
+  color: purple;
+}
+
+.epam-js-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-indent: 80px;
+  background: #ecf000;
+  color: rgba(4, 6, 32, 0.965);
+  font-size: 20px;
+}
+
 .epam-js-add-new-task-btn {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -8,13 +27,13 @@
 }
 
 .epam-js-to-do-list {
+  align-items: center;
   display: flex;
   flex-direction: column;
 }
 
 .epam-js-clean-link {
   color: red;
-
 }
 
 .epam-js-clean-link:hover {
@@ -30,8 +49,14 @@
 }
 
 .epam-js-task {
+  width: 100%;
+  background-color: deepskyblue;
+  position: relative;
+  list-style: none;
   font-size: x-large;
-  color: purple;
+  color: springgreen;
+  border: none;
+  border-bottom: 4px solid yellow;
 }
 
 .epam-js-task:hover {
@@ -43,27 +68,41 @@
 }
 
 .epam-js-task .bin-icon {
-  width: 4%;
-  float: right;
+  top: 0;
+  justify-self: flex-end;
+  z-index: 100;
+  position: absolute;
+  left: 90%;
+  width: 8%;
 }
 
 .epam-js-searchbox {
-  align-self: right;
+  color: yellow;
+  margin-right: 3%;
+  justify-self: flex-end;
   width: 20%;
-  background-color: orange ;
+  background-color: rgb(33, 145, 219) ;
   font-size: large;
   border: none;
   border-bottom: 4px solid black;
 }
 
 .epam-js-new-task-input {
-  background-color: greenyellow;
+  color: yellow;
+  border: none;
+  background-color: royalblue;
   align-self: center;
   font-size: large;
-  width: 25%;
+  width: 55%;
   border: none;
-  border-bottom: 4px solid black;
+  border-bottom: 4px solid white;
   margin-top: 5px;
+}
+
+.epam-js-chkbox {
+  width: fit-content;
+  background-color: blueviolet;
+  color: red;
 }
 
 .epam-js-add-new-task-btn {
@@ -75,7 +114,26 @@
   align-self: center;
 }
 
+.epam-js-add-new-task-btn:hover {
+  background-color: sandybrown;
+}
+
 .epam-js-sort-element {
-  background-color: khaki;
-  width: 20%;
+  margin-left: 15px;
+  font-size: smaller;
+  font-style: italic;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: orchid;
+  width: 70%;
+}
+
+.epam-js-task-date {
+  color: orchid;
+  background-color: rebeccapurple;
+}
+
+.epam-js-task-rename {
+  background-color: sandybrown;
+  width: 90%;
+  font-size: xx-large;
 }

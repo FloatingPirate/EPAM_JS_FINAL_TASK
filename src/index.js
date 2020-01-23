@@ -59,13 +59,13 @@ const removeTaskFromLocalStorage = (listName, taskId) => {
   localStorage.setItem(listName, JSON.stringify(modifiedTaskList));
 };
 
-const addTaskToListToLocalStorageFromText = (listName, text) => {
+const addTaskToListToLocalStorageFromText = (listName, task) => {
   if (!getListFormLocalStorage(listName)) {
-    localStorage.setItem(listName, JSON.stringify([createTask(text)]));
+    localStorage.setItem(listName, JSON.stringify([task]));
   } else {
     const listFromLocalStorage = getListFormLocalStorage(listName);
 
-    listFromLocalStorage.push(createTask(text));
+    listFromLocalStorage.push(task);
     localStorage.setItem(listName, JSON.stringify(listFromLocalStorage));
   }
 };
@@ -98,39 +98,50 @@ const addNewTaskToDomList = (listName, task) => {
   const tasksList = document.getElementById(listName);
   const newListElement = document.createElement('li');
 
-  // handle task editing on in JS
-  // TODO: fix a problem with a duplicated inputs on multiple double click
-  newListElement.addEventListener('dblclick', event => {
+  createTaskComponent(newListElement, task, listName);
+  tasksList.appendChild(newListElement);
+};
+
+const createTaskComponent = (liComp, task, listName) => {
+  liComp.addEventListener('dblclick', event => {
     const userTextInput = document.createElement('input');
     userTextInput.setAttribute('type', 'text');
+    userTextInput.setAttribute('class', 'epam-js-task-rename');
+    userTextInput.setAttribute('placeholder', 'Type the new text...');
 
     userTextInput.addEventListener('keyup', event => {
       event.preventDefault();
       if (event.keyCode === 13) {
-        newListElement.innerText = `${userTextInput.value} ${task.creationDate} ${task.dueDate}`;
+        liComp.innerText = '';
         changeTaskTextInLocalStorage(listName, task.id, userTextInput.value);
-        newListElement.removeChild(userTextInput);
+        reinitializeDomListWihValues(
+          listName,
+          getListFormLocalStorage(listName),
+        );
       } else if (event.keyCode === 27) {
-        newListElement.removeChild(userTextInput);
+        liComp.removeChild(userTextInput);
       }
     });
 
-    newListElement.appendChild(userTextInput);
+    liComp.appendChild(userTextInput);
   });
 
   //Checkbox appearing logic
   const checkBoxToADoneList = document.createElement('input');
   checkBoxToADoneList.setAttribute('type', 'checkbox');
-  newListElement.appendChild(checkBoxToADoneList);
+  checkBoxToADoneList.setAttribute('class', 'epam-js-chkbox');
+  liComp.appendChild(checkBoxToADoneList);
 
   checkBoxToADoneList.addEventListener('click', event => {
     removeTaskFromLocalStorage(listName, task.id);
     reinitializeDomListWihValues(listName, getListFormLocalStorage(listName));
 
     if (listName === OPEN_TASKS_LIST_ID) {
+      task.status = 'Closed';
       addTaskToListToLocalStorage(DONE_TASKS_LIST_ID, task);
       addNewTaskToDomList(DONE_TASKS_LIST_ID, task);
     } else {
+      task.status = 'Open';
       addTaskToListToLocalStorage(OPEN_TASKS_LIST_ID, task);
       addNewTaskToDomList(OPEN_TASKS_LIST_ID, task);
     }
@@ -139,41 +150,40 @@ const addNewTaskToDomList = (listName, task) => {
   const binIcon = document.createElement('img');
   binIcon.setAttribute('class', 'epam-js-task bin-icon');
   binIcon.setAttribute('src', '../resources/bin_icon.png');
-  binIcon.style.display = 'none';
-  newListElement.appendChild(binIcon);
 
   binIcon.addEventListener('click', event => {
     removeTaskFromLocalStorage(listName, task.id);
     reinitializeDomListWihValues(listName, getListFormLocalStorage(listName));
   });
 
-  newListElement.addEventListener('mouseover', event => {
-    binIcon.style.display = 'inline';
+  liComp.addEventListener('mouseover', event => {
+    liComp.appendChild(binIcon);
   });
 
-  newListElement.addEventListener('mouseout', event => {
-    binIcon.style.display = 'none';
+  liComp.addEventListener('mouseout', event => {
+    liComp.removeChild(binIcon);
   });
 
   const taskText = document.createTextNode(task.text);
-  const taskCreationDate = document.createTextNode(task.creationDate);
-  const taskDueDate = document.createTextNode(task.dueDate);
+  const taskCreationDate = document.createTextNode(` -> Creation date: ${task.creationDate}`);
+  const taskDueDate = document.createTextNode(` Due date: ${task.dueDate} <-`);
 
   const dateDiv = document.createElement('div');
   dateDiv.setAttribute('class', 'epam-js-task-date');
-  newListElement.setAttribute('class', 'epam-js-task');
-  newListElement.appendChild(taskText);
-  newListElement.appendChild(taskCreationDate);
-  newListElement.appendChild(taskDueDate);
+  dateDiv.appendChild(taskCreationDate);
+  dateDiv.appendChild(taskDueDate);
 
-  tasksList.appendChild(newListElement);
+  liComp.setAttribute('class', 'epam-js-task');
+  liComp.appendChild(taskText);
+  liComp.appendChild(dateDiv);
 };
 
 const addNewTaskToOpenListFromInputBox = () => {
   if (newTaskInput.value) {
-    addNewTaskToDomList(OPEN_TASKS_LIST_ID, createTask(newTaskInput.value));
+    const newTask = createTask(newTaskInput.value);
+    addNewTaskToDomList(OPEN_TASKS_LIST_ID, newTask);
 
-    addTaskToListToLocalStorageFromText(OPEN_TASKS_LIST_ID, newTaskInput.value);
+    addTaskToListToLocalStorageFromText(OPEN_TASKS_LIST_ID, newTask);
     newTaskInput.value = '';
   }
 };
